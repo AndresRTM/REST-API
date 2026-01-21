@@ -24,7 +24,7 @@ namespace REST_API.Data
                     new PersonInterestLink { Id = 2, Url = "https://example.com/janes-travel-vlog", PersonId = 2, InterestId = 2 },
                     new PersonInterestLink { Id = 3, Url = "https://example.com/alices-photo-gallery", PersonId = 3, InterestId = 3 },
                     new PersonInterestLink { Id = 4, Url = "https://example.com/bobs-cooking-recipes", PersonId = 4, InterestId = 4 },
-                    new PersonInterestLink { Id = 5, Url = "https://example.com/charlies-music-playlist", PersonId = 5, InterestId = 5 },
+                    new PersonInterestLink { Id = 5, Url = "https://example.com/charlies-music-playlist", PersonId = 5, InterestId = 5 }
                 );
 
             modelBuilder.Entity<Person>().HasData
