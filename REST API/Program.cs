@@ -1,5 +1,8 @@
 
 using Scalar.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using REST_API.Data;
+using REST_API.Models;
 
 namespace REST_API
 {
@@ -15,6 +18,12 @@ namespace REST_API
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
+            builder.Services.AddDbContext<RestApiDBContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,7 +36,7 @@ namespace REST_API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-           
+
             app.Run();
         }
     }
