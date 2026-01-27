@@ -51,7 +51,7 @@ namespace REST_API
 
                 if (personalInterests == null)
                 {
-                    return Results.NotFound($"No person with the name {name} was found");
+                    return Results.NotFound($"No person with the name \"{name}\" was found");
                 }
 
                 var linksList = personalInterests.PersonInterestLink.Select(link => new
@@ -69,7 +69,7 @@ namespace REST_API
                 var personalLinks = context.Persons.Include(p => p.PersonInterestLink).FirstOrDefault(p => p.FirstName == name);
                 if (personalLinks == null)
                 {
-                    return Results.NotFound($"No person with the name {name} was found");
+                    return Results.NotFound($"No person with the name \"{name}\" was found");
                 }
                 var linksList = personalLinks.PersonInterestLink.Select(link => new
                 {
@@ -86,7 +86,7 @@ namespace REST_API
                 //if person does not exist, return not found.
                 if (person == null)
                 {
-                    return Results.NotFound($"No person with the Id {id} was found");
+                    return Results.NotFound($"No person with the Id \"{id}\" was found");
                 }
 
                 //if interest does not exist, create it and link to person.
@@ -103,21 +103,50 @@ namespace REST_API
                         Url = url
                     });
                     context.SaveChanges();
-                    Results.Ok($"Interest {title} added to {person.FirstName + " " + person.LastName}");
+                    Results.Ok($"Interest \"{title}\" added to \"{person.FirstName} {person.LastName}\"");
                 }
 
                 //If interest is already linked to person, return conflict.
                 if (context.PersonInterestLinks.Any(link => link.PersonId == person.Id && link.InterestId == interest.Id))
                 {
-                    return Results.Conflict($"The interest {title} is already linked to {person.FirstName + " " + person.LastName}");
+                    return Results.Conflict($"The interest \"{title}\" is already linked to \"{person.FirstName} {person.LastName}\"");
                 }
 
                 //If interest exists but not linked to person, create link
                 context.PersonInterestLinks.Add(new PersonInterestLink { Url = url, PersonId = person.Id, InterestId = interest.Id });
                 context.SaveChanges();
-                return Results.Ok($"Interest {title} added to {person.FirstName + " "+ person.LastName}");
+                return Results.Ok($"Interest \"{title}\" added to \"{person.FirstName} {person.LastName}\"");
             });
 
+            app.MapPost("/addlinkstointerest/{id}", (RestApiDBContext context, int id, string title, string url) =>
+            {
+                var person = context.Persons.Find(id);
+                var interest = context.Interests.FirstOrDefault(i => i.Title.ToLower() == title.ToLower());
+                //Check if person exists
+                if (person == null)
+                {
+                    return Results.NotFound($"No person with the Id \"{id}\" was found");
+                }
+                //Check if interest exists
+                if (interest == null)
+                {
+                    return Results.NotFound($"The interest \"{title}\" doesn´t exist in the database");
+                }
+                //Check if link already exists for the person and interest
+                if (context.PersonInterestLinks.Any(link => link.Url == url && link.InterestId == interest.Id && link.PersonId == person.Id))
+                {
+                    return Results.Conflict($"Person \"{person.FirstName} {person.LastName}\" already has the link \"{url}\" for the interest \"{title}\"");
+                }
+
+                context.PersonInterestLinks.Add(new PersonInterestLink
+                {
+                    PersonId = person.Id,
+                    InterestId = interest.Id,
+                    Url = url
+                });
+                context.SaveChanges();
+                return Results.Ok($"Link added to interest \"{title}\" for person \"{person.FirstName} {person.LastName}\"");
+            });
 
             app.Run();
         }
