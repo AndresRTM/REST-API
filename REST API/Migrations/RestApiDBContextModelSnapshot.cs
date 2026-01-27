@@ -39,7 +39,7 @@ namespace REST_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Interests");
+                    b.ToTable("Interests", (string)null);
 
                     b.HasData(
                         new
@@ -126,7 +126,7 @@ namespace REST_API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.ToTable("Persons", (string)null);
 
                     b.HasData(
                         new
@@ -225,7 +225,7 @@ namespace REST_API.Migrations
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("PersonInterestLinks");
+                    b.ToTable("PersonInterestLinks", (string)null);
 
                     b.HasData(
                         new
