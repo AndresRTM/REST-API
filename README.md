@@ -36,7 +36,9 @@ The project relies on the following dependencies to enable database functionalit
 
 ## Database Schema
 
-The database is structured around a Many-to-Many relationship between **Person** and **Interest**. The junction table (**PersonInterestLink**) carries additional payload data (the URL), making the relationship unique per user.
+The database schema was designed using **Entity-Relationship (ER) modeling** utilizing **Crow's Foot notation** to visualize dependencies and cardinalities.
+
+The core structure is a **Many-to-Many relationship** between **Person** and **Interest**. A junction table, `PersonInterestLink`, allows for this connection while also carrying unique payload data (the specific URL), ensuring that web links are distinct per user-interest pair.
 
 <img width="1109" height="368" alt="image" src="https://github.com/user-attachments/assets/38146011-adb9-4a97-b29e-4e238802a688" />
 
