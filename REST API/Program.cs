@@ -94,6 +94,7 @@ namespace REST_API
                 {
                     var newInterest = new Interest { Title = title, Description = description };
                     context.Interests.Add(newInterest);
+                    context.SaveChanges();
 
                     context.PersonInterestLinks.Add(new PersonInterestLink
                     {
@@ -102,18 +103,19 @@ namespace REST_API
                         Url = url
                     });
                     context.SaveChanges();
-                    Results.Ok($"Interest {title} added to {person.FirstName + person.LastName} ");
+                    Results.Ok($"Interest {title} added to {person.FirstName + " " + person.LastName}");
                 }
 
                 //If interest is already linked to person, return conflict.
                 if (context.PersonInterestLinks.Any(link => link.PersonId == person.Id && link.InterestId == interest.Id))
                 {
-                    return Results.Conflict($"The interest {title} is already linked to {person.FirstName + person.LastName}");
+                    return Results.Conflict($"The interest {title} is already linked to {person.FirstName + " " + person.LastName}");
                 }
 
                 //If interest exists but not linked to person, create link
                 context.PersonInterestLinks.Add(new PersonInterestLink { Url = url, PersonId = person.Id, InterestId = interest.Id });
-                return Results.Ok();
+                context.SaveChanges();
+                return Results.Ok($"Interest {title} added to {person.FirstName + " "+ person.LastName}");
             });
 
 
