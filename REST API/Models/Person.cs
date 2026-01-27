@@ -6,6 +6,6 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
-        public List<PersonInterestLink> Links { get; set; }
+        public List<PersonInterestLink> PersonInterestLink { get; set; }
     }
 }
