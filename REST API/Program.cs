@@ -38,16 +38,16 @@ namespace REST_API
 
             app.UseAuthorization();
 
-            app.MapGet("/Persons", (RestApiDBContext context) =>
+            app.MapGet("/Persons", async (RestApiDBContext context) =>
             {
-                var persons = context.Persons.ToList();
+                var persons = await context.Persons.ToListAsync();
 
                 return Results.Ok(persons);
             });
 
-            app.MapGet("/PersonalInterests", (RestApiDBContext context, string name) =>
+            app.MapGet("/PersonalInterests", async (RestApiDBContext context, string name) =>
             {
-                var personalInterests = context.Persons.Include(p => p.PersonInterestLink).ThenInclude(link => link.Interest).FirstOrDefault(p => p.FirstName == name);
+                var personalInterests = await context.Persons.Include(p => p.PersonInterestLink).ThenInclude(link => link.Interest).FirstOrDefaultAsync(p => p.FirstName == name);
 
                 if (personalInterests == null)
                 {
@@ -64,9 +64,9 @@ namespace REST_API
                 return Results.Ok(linksList);
             });
 
-            app.MapGet("/PersonalLinks", (RestApiDBContext context, string name) =>
+            app.MapGet("/PersonalLinks", async (RestApiDBContext context, string name) =>
             {
-                var personalLinks = context.Persons.Include(p => p.PersonInterestLink).FirstOrDefault(p => p.FirstName == name);
+                var personalLinks = await context.Persons.Include(p => p.PersonInterestLink).FirstOrDefaultAsync(p => p.FirstName == name);
                 if (personalLinks == null)
                 {
                     return Results.NotFound($"No person with the name \"{name}\" was found");
@@ -78,10 +78,10 @@ namespace REST_API
                 return Results.Ok(linksList);
             });
 
-            app.MapPost("/persons/{id}/AddInterest", (RestApiDBContext context, int id, string title, string description, string url) =>
+            app.MapPost("/persons/{id}/AddInterest", async (RestApiDBContext context, int id, string title, string description, string url) =>
             {
-                var person = context.Persons.Find(id);
-                var interest = context.Interests.FirstOrDefault(t => t.Title.ToLower() == title.ToLower());
+                var person = await context.Persons.FindAsync(id);
+                var interest = await context.Interests.FirstOrDefaultAsync(t => t.Title.ToLower() == title.ToLower());
 
                 //if person does not exist, return not found.
                 if (person == null)
@@ -94,7 +94,7 @@ namespace REST_API
                 {
                     var newInterest = new Interest { Title = title, Description = description };
                     context.Interests.Add(newInterest);
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
 
                     context.PersonInterestLinks.Add(new PersonInterestLink
                     {
@@ -102,26 +102,26 @@ namespace REST_API
                         InterestId = newInterest.Id,
                         Url = url
                     });
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
                     Results.Ok($"Interest \"{title}\" added to \"{person.FirstName} {person.LastName}\"");
                 }
 
                 //If interest is already linked to person, return conflict.
-                if (context.PersonInterestLinks.Any(link => link.PersonId == person.Id && link.InterestId == interest.Id))
+                if (await context.PersonInterestLinks.AnyAsync(link => link.PersonId == person.Id && link.InterestId == interest.Id))
                 {
                     return Results.Conflict($"The interest \"{title}\" is already linked to \"{person.FirstName} {person.LastName}\"");
                 }
 
                 //If interest exists but not linked to person, create link
                 context.PersonInterestLinks.Add(new PersonInterestLink { Url = url, PersonId = person.Id, InterestId = interest.Id });
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return Results.Ok($"Interest \"{title}\" added to \"{person.FirstName} {person.LastName}\"");
             });
 
-            app.MapPost("/addlinkstointerest/{id}", (RestApiDBContext context, int id, string title, string url) =>
+            app.MapPost("/addlinkstointerest/{id}", async (RestApiDBContext context, int id, string title, string url) =>
             {
-                var person = context.Persons.Find(id);
-                var interest = context.Interests.FirstOrDefault(i => i.Title.ToLower() == title.ToLower());
+                var person = await context.Persons.FindAsync(id);
+                var interest = await context.Interests.FirstOrDefaultAsync(i => i.Title.ToLower() == title.ToLower());
                 //Check if person exists
                 if (person == null)
                 {
@@ -133,7 +133,7 @@ namespace REST_API
                     return Results.NotFound($"The interest \"{title}\" doesn´t exist in the database");
                 }
                 //Check if link already exists for the person and interest
-                if (context.PersonInterestLinks.Any(link => link.Url == url && link.InterestId == interest.Id && link.PersonId == person.Id))
+                if (await context.PersonInterestLinks.AnyAsync(link => link.Url == url && link.InterestId == interest.Id && link.PersonId == person.Id))
                 {
                     return Results.Conflict($"Person \"{person.FirstName} {person.LastName}\" already has the link \"{url}\" for the interest \"{title}\"");
                 }
@@ -144,7 +144,7 @@ namespace REST_API
                     InterestId = interest.Id,
                     Url = url
                 });
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return Results.Ok($"Link added to interest \"{title}\" for person \"{person.FirstName} {person.LastName}\"");
             });
 
