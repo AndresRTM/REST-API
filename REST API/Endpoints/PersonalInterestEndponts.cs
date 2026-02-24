@@ -73,7 +73,7 @@ namespace REST_API.Endpoints
                         Url = userInterest.Url
                     });
                     await context.SaveChangesAsync();
-                    Results.Ok($"Interest \"{userInterest.Title}\" added to \"{person.FirstName} {person.LastName}\"");
+                    return Results.Ok($"Interest \"{userInterest.Title}\" added to \"{person.FirstName} {person.LastName}\"");
                 }
 
                 //If interest is already linked to person, return conflict.
