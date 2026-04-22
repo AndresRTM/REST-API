@@ -34,6 +34,37 @@ The project relies on the following dependencies to enable database functionalit
 * `Microsoft.EntityFrameworkCore.Tools`
 * `Scalar.AspNetCore`
 
+## Architecture & Code Organization
+
+The project follows modern API design principles with a focus on maintainability, security, and separation of concerns.
+
+### Modular Endpoint Structure
+API endpoints are organized into dedicated endpoint classes using **Dependency Injection (DI)**, rather than being centralized in `Program.cs`. This approach provides:
+* **Improved maintainability:** Each feature has its own dedicated class
+* **Better testability:** Dependencies can be easily mocked
+* **Loose coupling:** Components are independent and interchangeable
+
+Endpoint classes are registered in the DI container in `Program.cs` and injected where needed, ensuring proper lifecycle management and resource handling.
+
+### Data Transfer Objects (DTOs)
+The API uses **DTOs** for input/output operations to:
+* **Prevent over-posting vulnerabilities:** Clients cannot manipulate internal model properties
+* **Improve security:** Sensitive fields are not exposed through the API
+* **Enable validation:** Input data is validated before reaching the business logic
+* **Provide abstraction:** API contracts are decoupled from database models
+
+### Data Annotations
+Model classes utilize **Data Annotations** for validation, ensuring:
+* **Input sanitization:** Invalid data is rejected at the entry point
+* **Consistent validation rules:** Validation logic is centralized in model classes
+* **Automatic error responses:** Framework handles validation errors automatically
+
+Examples of annotations used:
+* `[Required]` - Ensures mandatory fields are provided
+* `[StringLength]` - Limits text field length
+* `[Phone]` - Validates phone number format
+* `[Url]` - Validates URL format
+
 ## Database Schema
 
 The database schema was designed using **Entity-Relationship (ER) modeling** utilizing **Crow's Foot notation** to visualize dependencies and cardinalities.
