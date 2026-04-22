@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using REST_API.Data;
 using REST_API.DTOs;
+using REST_API.Models;
 
 namespace REST_API.Endpoints
 {
@@ -9,8 +11,9 @@ namespace REST_API.Endpoints
         public static void RegisterEndpoint(WebApplication app)
         {
             // Endpoint to get all persons
-            app.MapGet("/Persons", async (RestApiDBContext context) =>
-            {
+            app.MapGet("/Persons", async (RestApiDBContext context, UserManager<Person> manager) =>
+            {                
+
                 var persons = await context.Persons.ToListAsync();
 
                 var personList = new List<PersonDto>();

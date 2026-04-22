@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using REST_API.Data;
 using REST_API.Endpoints;
@@ -12,6 +13,7 @@ namespace REST_API
     {
         public static void Main(string[] args)
         {
+            
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -25,7 +27,10 @@ namespace REST_API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-
+            builder.Services.AddIdentity<Person, IdentityRole<int>>().
+                AddEntityFrameworkStores<RestApiDBContext>().
+                AddUserManager<UserManager<Person>>().
+                AddDefaultTokenProviders();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

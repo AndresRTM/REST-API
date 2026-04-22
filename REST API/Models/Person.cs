@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace REST_API.Models
 {
-    public class Person
+    public class Person : IdentityUser<int>
     {
         [StringLength (50)]
         public int Id { get; set; }

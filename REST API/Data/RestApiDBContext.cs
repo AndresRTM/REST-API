@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using REST_API.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace REST_API.Data
 {
-    public class RestApiDBContext : DbContext
+    public class RestApiDBContext : IdentityDbContext<Person, IdentityRole<int>, int>
     {
         public RestApiDBContext(DbContextOptions<RestApiDBContext> options) : base(options)
         {
@@ -14,7 +16,7 @@ namespace REST_API.Data
         public DbSet<Interest> Interests { get; set; }
         public DbSet<PersonInterestLink> PersonInterestLinks { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+       /* protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -54,6 +56,6 @@ namespace REST_API.Data
                     new Interest { Id = 10, Title = "Art", Description = "Creating and appreciating various forms of art." }
 
                 );
-        }
+        }*/
     }
 }
