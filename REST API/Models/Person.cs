@@ -4,8 +4,8 @@ namespace REST_API.Models
 {
     public class Person
     {
-        public int Id { get; set; }
         [StringLength (50)]
+        public int Id { get; set; }
 
         public string FirstName { get; set; }
         [StringLength(50)]
