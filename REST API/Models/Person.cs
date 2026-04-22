@@ -4,10 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace REST_API.Models
 {
     public class Person : IdentityUser<int>
-    {
-        [StringLength (50)]
-        public int Id { get; set; }
+    {      
 
+        [StringLength (50)]
         public string FirstName { get; set; }
         [StringLength(50)]
         public string LastName { get; set; }
